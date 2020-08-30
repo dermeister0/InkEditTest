@@ -52,8 +52,6 @@ namespace InkTest
                 control.Dispose();
             }
 
-            panel1.Controls.Clear();
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
