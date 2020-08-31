@@ -1,14 +1,7 @@
 ﻿using Microsoft.Ink;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace InkTest
@@ -32,15 +25,6 @@ namespace InkTest
             }
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            panel1.Controls.Clear();
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-
         private void btnDisposeAndClear_Click(object sender, EventArgs e)
         {
             while (panel1.Controls.Count > 0)
@@ -57,22 +41,6 @@ namespace InkTest
             GC.Collect();
         }
 
-
-
-        private void btnDemo1_Click(object sender, EventArgs e)
-        {
-            var startMemory = Process.GetCurrentProcess().PrivateMemorySize64;
-
-            btnCreate_Click(sender, e);
-            Thread.Sleep(1000);
-            btnClear_Click(sender, e);
-
-            var finalMemory = Process.GetCurrentProcess().PrivateMemorySize64;
-            var diff = (finalMemory - startMemory) / 1024 / 1024;
-
-            MessageBox.Show($"+{diff} MiB");
-        }
-
         private void btnDemo2_Click(object sender, EventArgs e)
         {
             var startMemory = Process.GetCurrentProcess().PrivateMemorySize64;
@@ -87,6 +55,22 @@ namespace InkTest
             MessageBox.Show($"+{diff} MiB");
         }
 
+        private void btnDemo3_Click(object sender, EventArgs e)
+        {
+            var startMemory = Process.GetCurrentProcess().PrivateMemorySize64;
 
+            for (int i = 0; i < 10; i++)
+            {
+                btnCreate_Click(sender, e);
+                Thread.Sleep(1000);
+                btnDisposeAndClear_Click(sender, e);
+                Thread.Sleep(1000);
+            }
+
+            var finalMemory = Process.GetCurrentProcess().PrivateMemorySize64;
+            var diff = (finalMemory - startMemory) / 1024 / 1024;
+
+            MessageBox.Show($"+{diff} MiB");
+        }
     }
 }
