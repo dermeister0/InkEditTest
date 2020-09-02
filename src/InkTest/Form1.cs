@@ -27,13 +27,9 @@ namespace InkTest
 
         private void btnDisposeAndClear_Click(object sender, EventArgs e)
         {
-            while (panel1.Controls.Count > 0)
+            for (int i = panel1.Controls.Count - 1; i >= 0; i--)
             {
-                var lastIndex = panel1.Controls.Count - 1;
-                var control = panel1.Controls[lastIndex];
-                panel1.Controls.RemoveAt(lastIndex);
-
-                control.Dispose();
+                panel1.Controls[i].Dispose();
             }
 
             GC.Collect();
