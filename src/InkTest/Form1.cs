@@ -11,6 +11,23 @@ namespace InkTest
         public Form1()
         {
             InitializeComponent();
+
+            SimpleHelpers.ObjectPool<InkEdit>.MaxCapacity = 16;
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                SimpleHelpers.ObjectPool<InkEdit>.Clear();
+
+                components?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
@@ -19,7 +36,13 @@ namespace InkTest
             {
                 for (int x = 0; x < 4; x++)
                 {
-                    var ie = new InkEdit { Left = x * 50, Top = y * 50, Width = 40, Height = 40 };
+                    InkEdit ie = SimpleHelpers.ObjectPool<InkEdit>.Get(() => new InkEdit());
+
+                    ie.Left = x * 50;
+                    ie.Top = y * 50;
+                    ie.Width = 40;
+                    ie.Height = 40;
+
                     panel1.Controls.Add(ie);
                 }
             }
@@ -29,12 +52,9 @@ namespace InkTest
         {
             for (int i = panel1.Controls.Count - 1; i >= 0; i--)
             {
-                panel1.Controls[i].Dispose();
+                var control = panel1.Controls[i] as InkEdit;
+                SimpleHelpers.ObjectPool<InkEdit>.Put(control);
             }
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
         }
 
         private void btnDemo2_Click(object sender, EventArgs e)
